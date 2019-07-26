@@ -156,8 +156,20 @@ func (p *path) moveForward(m maze) {
 	}
 	p.moveForward(m)
 }
-func (m maze) findAllNodes() {
+func (m maze) findAllBranches() {
+	// TODO: findAllBranches abandons the pretext of a maze goer, looks at the overhead view of the map
+	//then determins all potentiall branches
 
+}
+func (p *path) smartPath() {
+	//TODO: The smart path function will try to sole the maxe with some reasoning
+	//keeping track of branches and, realizing when repeating steps, And recognizing
+	//when it is important to backtrack
+}
+
+func (p *path) shortestDistance() {
+	//TODO: Using findallBranches, finds the shortest distance to the end
+	//Utilizes findAllBranches
 }
 
 func (m *maze) drawPath(p *path) [][]byte {
