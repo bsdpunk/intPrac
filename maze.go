@@ -190,7 +190,7 @@ func createMaze(bm []byte) (m maze) {
 		depth:  len(m.layers),
 	}
 	m.findEntrance()
-	m.findAllNodes()
+	m.findAllBranches()
 	m.findExit()
 	return
 }
