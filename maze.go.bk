@@ -1,0 +1,140 @@
+package main
+
+import "fmt"
+import "os"
+import "bufio"
+import "bytes"
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
+type node struct {
+	x      int
+	y      int
+	branch bool
+}
+
+type maze struct {
+	layers    [][]byte
+	depth     int
+	entrance  node
+	nodes     []node
+	exit      node
+	solutions [][]node
+	best      []node
+}
+
+func bFile(f string) []byte {
+	mazeFile := f
+	file, err := os.Open(mazeFile)
+	check(err)
+	defer file.Close()
+
+	fileInfo, _ := file.Stat()
+	var size int64 = fileInfo.Size()
+	bMap := make([]byte, size)
+
+	// read file into bytes
+	buffer := bufio.NewReader(file)
+	_, err = buffer.Read(bMap)
+	check(err)
+	return bMap
+}
+
+//func findEntrance(bArr [][]byte) (x, y int) {
+func (m *maze) findEntrance() {
+	fmt.Println(m.layers)
+	fmt.Println(m)
+	for y := range m.layers {
+		fmt.Println(y)
+		if m.layers[y][0] == 32 {
+			m.entrance = node{0, y, false}
+			return
+		}
+	}
+	fmt.Println("No Entrance!")
+	return
+}
+
+func (n *node) getSurronding(m maze) {
+	ymax := len(m.layers)
+	xmax := len(m.layers[0])
+	fmt.Println(xmax, ymax)
+	north := node{x: n.x, y: n.y - 1}
+	south := node{x: n.x, y: n.y + 1}
+	east := node{x: n.x + 1, y: n.y}
+	west := node{x: n.x - 1, y: n.y}
+	nsew := [4]node{north, south, east, west}
+	var total int
+	fmt.Println(nsew)
+	for r := range nsew {
+		//		fmt.Println(nsew[r])
+
+		fmt.Println(nsew[r].x, ">= 0", nsew[r].x, "<=", xmax, nsew[r].y, ">= 0", nsew[r].y, " <=", ymax)
+		if nsew[r].x >= 0 && nsew[r].x <= xmax && nsew[r].y >= 0 && nsew[r].y <= ymax {
+			fmt.Println(m.layers[nsew[r].y][nsew[r].x])
+			if m.layers[nsew[r].y][nsew[r].x] == 32 {
+
+				fmt.Println(nsew[r])
+				total += 1
+			}
+		}
+	}
+	fmt.Println(total)
+	if total > 2 {
+		n.branch = true
+		return
+	} else {
+		return
+	}
+
+}
+
+func (m maze) findAllNodes() {
+
+}
+
+func createMaze(bm []byte) (m maze) {
+	fmt.Println(bm)
+	m = maze{
+		layers: bytes.SplitAfterN(bm, []byte("\n"), -1),
+		depth:  len(m.layers),
+	}
+	fmt.Println(m)
+	m.findEntrance()
+	m.findAllNodes()
+	return
+}
+
+func main() {
+	bMap := bFile(os.Args[1])
+	Maze := createMaze(bMap)
+	fmt.Println(Maze)
+	//layers: bytes.SplitAfterN(bMap, []byte("\n"), -1),
+	//depth: len()
+	//entrance: findEntrance(lines),
+	//nodes: findAllNodes(),
+	//	fmt.Println(beef)
+	//	fmt.Println(beef[0])
+	//lines := bytes.SplitAfterN(bMap, []byte("\n"), -1)
+	//	fmt.Printf("%q", lines[1])
+	//	fmt.Printf("%T", lines)
+	//ent := findEntrance(lines)
+	//fmt.Printf("Entrance is [%d, 0]", ent)
+	//Nodes := []node{x: ent, y: 0}
+	man := node{4, 1, false}
+	mant := node{5, 1, false}
+	manf := node{3, 1, false}
+	man.getSurronding(Maze)
+	mant.getSurronding(Maze)
+	manf.getSurronding(Maze)
+	Maze.entrance.getSurronding(Maze)
+	fmt.Println(man)
+	fmt.Println(mant)
+	fmt.Println(manf)
+	fmt.Println(Maze.entrance)
+
+}
